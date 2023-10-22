@@ -1,9 +1,6 @@
 package com.atm.atm2;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,9 +16,7 @@ import java.util.Optional;
 
 public class ATM extends Application {
 
-    private int balance;
     private int pin_code;
-    private long number;
     private File file;
     private final double WEIGHT = 200;
     private final double HEIGHT = 200;
@@ -49,9 +44,7 @@ public class ATM extends Application {
 
             file = fileChooser.showOpenDialog(stage);
             card.readCard(new File(file.getPath()));
-            balance = card.getBalance();
             pin_code = card.getPin_code();
-            number = card.getNumber();
 
 
             stage.setScene(createScene(buttons.get(5), passwordField));
@@ -87,9 +80,7 @@ public class ATM extends Application {
             dialog.setHeaderText(null);
             dialog.setContentText("Внесите сумму:");
             Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()){
-                card.updateBalanceCard(file, Integer.parseInt(result.get()));
-            }
+            result.ifPresent(s -> card.updateBalanceCard(file, Integer.parseInt(s)));
 
 
         });
@@ -108,7 +99,7 @@ public class ATM extends Application {
             dialog.setContentText("Введите сумму:");
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()){
-                if(Integer.valueOf(result.get()) < card.getBalance()){
+                if(Integer.parseInt(result.get()) < card.getBalance()){
                     card.updateBalanceCard(file, backwards(Integer.valueOf(result.get())));
                 }
                 else{
@@ -138,9 +129,8 @@ public class ATM extends Application {
          Group root = new Group();
          root1.setCenter(button);
          root.getChildren().add(root1);
-        Scene scene1 = new Scene(root, WEIGHT, HEIGHT);
 
-        return scene1;
+        return new Scene(root, WEIGHT, HEIGHT);
 
     }
     public Scene createScene(Button button, PasswordField textField){
@@ -149,8 +139,7 @@ public class ATM extends Application {
         root1.setCenter(textField);
         Group root = new Group();
         root.getChildren().add(root1);
-        Scene scene1 = new Scene(root, WEIGHT, HEIGHT);
-        return scene1;
+        return new Scene(root, WEIGHT, HEIGHT);
 
     }
     public Scene createMainScene(List<Button> buttons){
@@ -162,9 +151,8 @@ public class ATM extends Application {
         }
         Group root = new Group();
         root.getChildren().add(vBox);
-        Scene scene1 = new Scene(root, WEIGHT, HEIGHT);
 
-        return scene1;
+        return new Scene(root, WEIGHT, HEIGHT);
 
     }
     public void setWH(Button button){
